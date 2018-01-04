@@ -36,7 +36,7 @@ func (f *flattrimizer) FlattenWithPrefix(prefix string, value map[string]interfa
 
 func (f *flattrimizer) flatten(result map[string]interface{}, prefix string, value map[string]interface{}) {
 
-	flattenKey := f.BuildFlattenKey(prefix)
+	flattenKey := f.buildFlattenKey(prefix)
 
 	for key, val := range value {
 
@@ -66,7 +66,7 @@ func (f *flattrimizer) flatten(result map[string]interface{}, prefix string, val
 	}
 }
 
-func (f *flattrimizer) BuildFlattenKey(prefix string) string {
+func (f *flattrimizer) buildFlattenKey(prefix string) string {
 	if prefix == "" {
 		return prefix
 	} else {

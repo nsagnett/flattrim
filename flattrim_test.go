@@ -32,7 +32,7 @@ func TestFlattrimizer_BuildFlattenKey(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result := flattrimizerInst.BuildFlattenKey(test.value)
+		result := flattrimizerInst.buildFlattenKey(test.value)
 		assert.Equal(t, result, test.expected)
 	}
 }
