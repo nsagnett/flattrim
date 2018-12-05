@@ -1,10 +1,10 @@
 package flattrim
 
 import (
-	"testing"
-	"reflect"
-	"github.com/stretchr/testify/assert"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
+	"reflect"
+	"testing"
 )
 
 func init() {
@@ -42,7 +42,17 @@ func TestFlattrimizer_Flatten(t *testing.T) {
 	expectedMap := make(map[string]interface{})
 
 	json.Unmarshal([]byte(data), &jsonMap)
-	json.Unmarshal([]byte(expectedData), &expectedMap)
+	json.Unmarshal([]byte(expectedDataWithPoint), &expectedMap)
+	assertMap(t, flattrimizerInst.Flatten(jsonMap), expectedMap)
+}
+
+func TestFlattrimizer_FlattenWithBinder(t *testing.T) {
+	jsonMap := make(map[string]interface{})
+	expectedMap := make(map[string]interface{})
+
+	flattrimizerInst.SetBinder("_")
+	json.Unmarshal([]byte(data), &jsonMap)
+	json.Unmarshal([]byte(expectedDataWithUnderscore), &expectedMap)
 	assertMap(t, flattrimizerInst.Flatten(jsonMap), expectedMap)
 }
 
@@ -69,6 +79,16 @@ var (
 		"type": "User",
 		"site_admin": false
 	},
+	"list": [
+		"value1",
+		3,
+		true,
+		{
+			"value2" : {
+				"k1": "v1"
+			}
+		}
+	],
 	"name": "Hello-World",
 	"full_name": "octocat/Hello-World",
 	"description": "This your first repo!",
@@ -227,7 +247,7 @@ var (
 		}
 	}
 }`
-	expectedData = `{
+	expectedDataWithPoint = `{
 	"clone_url": "https://github.com/octocat/Hello-World.git",
 	"created_at": "2011-01-26T19:01:12Z",
 	"default_branch": "master",
@@ -280,6 +300,12 @@ var (
 	"owner.subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
 	"owner.type": "User",
 	"owner.url": "https://api.github.com/users/octocat",
+	"list": [
+		"value1",
+		3,
+		true,
+		{ "value2.k1":"v1" }
+	],
 	"parent.clone_url": "https://github.com/octocat/Hello-World.git",
 	"parent.created_at": "2011-01-26T19:01:12Z",
 	"parent.default_branch": "master",
@@ -380,6 +406,173 @@ var (
 	"source.updated_at": "2011-01-26T19:14:43Z",
 	"source.url": "https://api.github.com/repos/octocat/Hello-World",
 	"source.watchers_count": 80,
+	"ssh_url": "git@github.com:octocat/Hello-World.git",
+	"stargazers_count": 80,
+	"subscribers_count": 42,
+	"svn_url": "https://svn.github.com/octocat/Hello-World",
+	"updated_at": "2011-01-26T19:14:43Z",
+	"url": "https://api.github.com/repos/octocat/Hello-World",
+	"watchers_count": 80
+}`
+	expectedDataWithUnderscore = `{
+	"clone_url": "https://github.com/octocat/Hello-World.git",
+	"created_at": "2011-01-26T19:01:12Z",
+	"default_branch": "master",
+	"description": "This your first repo!",
+	"fork": false,
+	"forks_count": 9,
+	"full_name": "octocat/Hello-World",
+	"git_url": "git://github.com/octocat/Hello-World.git",
+	"has_downloads": true,
+	"has_issues": true,
+	"has_wiki": true,
+	"homepage": "https://github.com",
+	"html_url": "https://github.com/octocat/Hello-World",
+	"id": 1296269,
+	"language": null,
+	"mirror_url": "git://git.example.com/octocat/Hello-World",
+	"name": "Hello-World",
+	"open_issues_count": 0,
+	"organization_avatar_url": "https://github.com/images/error/octocat_happy.gif",
+	"organization_events_url": "https://api.github.com/users/octocat/events{/privacy}",
+	"organization_followers_url": "https://api.github.com/users/octocat/followers",
+	"organization_following_url": "https://api.github.com/users/octocat/following{/other_user}",
+	"organization_gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+	"organization_gravatar_id": "somehexcode",
+	"organization_html_url": "https://github.com/octocat",
+	"organization_id": 1,
+	"organization_login": "octocat",
+	"organization_organizations_url": "https://api.github.com/users/octocat/orgs",
+	"organization_received_events_url": "https://api.github.com/users/octocat/received_events",
+	"organization_repos_url": "https://api.github.com/users/octocat/repos",
+	"organization_site_admin": false,
+	"organization_starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+	"organization_subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+	"organization_type": "Organization",
+	"organization_url": "https://api.github.com/users/octocat",
+	"owner_avatar_url": "https://github.com/images/error/octocat_happy.gif",
+	"owner_events_url": "https://api.github.com/users/octocat/events{/privacy}",
+	"owner_followers_url": "https://api.github.com/users/octocat/followers",
+	"owner_following_url": "https://api.github.com/users/octocat/following{/other_user}",
+	"owner_gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+	"owner_gravatar_id": "somehexcode",
+	"owner_html_url": "https://github.com/octocat",
+	"owner_id": 1,
+	"owner_login": "octocat",
+	"owner_organizations_url": "https://api.github.com/users/octocat/orgs",
+	"owner_received_events_url": "https://api.github.com/users/octocat/received_events",
+	"owner_repos_url": "https://api.github.com/users/octocat/repos",
+	"owner_site_admin": false,
+	"owner_starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+	"owner_subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+	"owner_type": "User",
+	"owner_url": "https://api.github.com/users/octocat",
+	"list": [
+		"value1",
+		3,
+		true,
+		{ "value2_k1":"v1" }
+	],
+	"parent_clone_url": "https://github.com/octocat/Hello-World.git",
+	"parent_created_at": "2011-01-26T19:01:12Z",
+	"parent_default_branch": "master",
+	"parent_description": "This your first repo!",
+	"parent_fork": true,
+	"parent_forks_count": 9,
+	"parent_full_name": "octocat/Hello-World",
+	"parent_git_url": "git://github.com/octocat/Hello-World.git",
+	"parent_has_downloads": true,
+	"parent_has_issues": true,
+	"parent_has_wiki": true,
+	"parent_homepage": "https://github.com",
+	"parent_html_url": "https://github.com/octocat/Hello-World",
+	"parent_id": 1296269,
+	"parent_language": null,
+	"parent_mirror_url": "git://git.example.com/octocat/Hello-World",
+	"parent_name": "Hello-World",
+	"parent_open_issues_count": 0,
+	"parent_owner_avatar_url": "https://github.com/images/error/octocat_happy.gif",
+	"parent_owner_events_url": "https://api.github.com/users/octocat/events{/privacy}",
+	"parent_owner_followers_url": "https://api.github.com/users/octocat/followers",
+	"parent_owner_following_url": "https://api.github.com/users/octocat/following{/other_user}",
+	"parent_owner_gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+	"parent_owner_gravatar_id": "somehexcode",
+	"parent_owner_html_url": "https://github.com/octocat",
+	"parent_owner_id": 1,
+	"parent_owner_login": "octocat",
+	"parent_owner_organizations_url": "https://api.github.com/users/octocat/orgs",
+	"parent_owner_received_events_url": "https://api.github.com/users/octocat/received_events",
+	"parent_owner_repos_url": "https://api.github.com/users/octocat/repos",
+	"parent_owner_site_admin": false,
+	"parent_owner_starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+	"parent_owner_subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+	"parent_owner_type": "User",
+	"parent_owner_url": "https://api.github.com/users/octocat",
+	"parent_permissions_admin": false,
+	"parent_permissions_pull": true,
+	"parent_permissions_push": false,
+	"parent_private": false,
+	"parent_pushed_at": "2011-01-26T19:06:43Z",
+	"parent_size": 108,
+	"parent_ssh_url": "git@github.com:octocat/Hello-World.git",
+	"parent_stargazers_count": 80,
+	"parent_svn_url": "https://svn.github.com/octocat/Hello-World",
+	"parent_updated_at": "2011-01-26T19:14:43Z",
+	"parent_url": "https://api.github.com/repos/octocat/Hello-World",
+	"parent_watchers_count": 80,
+	"permissions_admin": false,
+	"permissions_pull": true,
+	"permissions_push": false,
+	"private": false,
+	"pushed_at": "2011-01-26T19:06:43Z",
+	"size": 108,
+	"source_clone_url": "https://github.com/octocat/Hello-World.git",
+	"source_created_at": "2011-01-26T19:01:12Z",
+	"source_default_branch": "master",
+	"source_description": "This your first repo!",
+	"source_fork": true,
+	"source_forks_count": 9,
+	"source_full_name": "octocat/Hello-World",
+	"source_git_url": "git://github.com/octocat/Hello-World.git",
+	"source_has_downloads": true,
+	"source_has_issues": true,
+	"source_has_wiki": true,
+	"source_homepage": "https://github.com",
+	"source_html_url": "https://github.com/octocat/Hello-World",
+	"source_id": 1296269,
+	"source_language": null,
+	"source_mirror_url": "git://git.example.com/octocat/Hello-World",
+	"source_name": "Hello-World",
+	"source_open_issues_count": 0,
+	"source_owner_avatar_url": "https://github.com/images/error/octocat_happy.gif",
+	"source_owner_events_url": "https://api.github.com/users/octocat/events{/privacy}",
+	"source_owner_followers_url": "https://api.github.com/users/octocat/followers",
+	"source_owner_following_url": "https://api.github.com/users/octocat/following{/other_user}",
+	"source_owner_gists_url": "https://api.github.com/users/octocat/gists{/gist_id}",
+	"source_owner_gravatar_id": "somehexcode",
+	"source_owner_html_url": "https://github.com/octocat",
+	"source_owner_id": 1,
+	"source_owner_login": "octocat",
+	"source_owner_organizations_url": "https://api.github.com/users/octocat/orgs",
+	"source_owner_received_events_url": "https://api.github.com/users/octocat/received_events",
+	"source_owner_repos_url": "https://api.github.com/users/octocat/repos",
+	"source_owner_site_admin": false,
+	"source_owner_starred_url": "https://api.github.com/users/octocat/starred{/owner}{/repo}",
+	"source_owner_subscriptions_url": "https://api.github.com/users/octocat/subscriptions",
+	"source_owner_type": "User",
+	"source_owner_url": "https://api.github.com/users/octocat",
+	"source_permissions_admin": false,
+	"source_permissions_pull": true,
+	"source_permissions_push": false,
+	"source_private": false,
+	"source_pushed_at": "2011-01-26T19:06:43Z",
+	"source_size": 108,
+	"source_ssh_url": "git@github.com:octocat/Hello-World.git",
+	"source_stargazers_count": 80,
+	"source_svn_url": "https://svn.github.com/octocat/Hello-World",
+	"source_updated_at": "2011-01-26T19:14:43Z",
+	"source_url": "https://api.github.com/repos/octocat/Hello-World",
+	"source_watchers_count": 80,
 	"ssh_url": "git@github.com:octocat/Hello-World.git",
 	"stargazers_count": 80,
 	"subscribers_count": 42,
